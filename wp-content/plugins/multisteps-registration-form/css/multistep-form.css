@@ -1,0 +1,379 @@
+#heading {
+    color: #fdb143;
+    font-weight: bold;
+}
+
+#regForm {
+    text-align: center;
+    position: relative;
+    margin-top: 20px;
+}
+
+#regForm fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+.form-card {
+    text-align: left;
+}
+
+#regForm fieldset:not(:first-of-type) {
+    display: none
+}
+
+#regForm input,
+#regForm textarea {
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    margin-bottom: 25px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: montserrat;
+    color: #2C3E50;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+#regForm input:focus,
+#regForm textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: 1px solid #fdb143;
+    outline-width: 0;
+}
+
+#regForm .form-card .phone-number .enter_phone {
+    position: relative;
+}
+
+#regForm .form-card .phone-number .enter_phone .form-control {
+    width: 76% !important;
+    margin-right: 4px;
+}
+
+#regForm .form-card input[type="button"] {
+    text-align: center;
+}
+
+#regForm .action-button {
+    width: 100px;
+    background: #fdb143;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    float: right;
+}
+
+#regForm .action-button:hover,
+#regForm .action-button:focus {
+    background-color: #ef3636;
+}
+
+#regForm .action-button-previous {
+    width: 100px;
+    background: #616161;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px 10px 0px;
+    float: right;
+}
+
+#regForm .action-button-previous:hover,
+#regForm .action-button-previous:focus {
+    background-color: #000000;
+}
+
+.card {
+    z-index: 0;
+    border: none;
+    position: relative;
+}
+
+.fs-title {
+    font-size: 25px;
+    color: #fdb143;
+    margin-bottom: 15px;
+    font-weight: normal;
+    text-align: left;
+}
+
+.purple-text {
+    color: #fdb143;
+    font-weight: normal;
+}
+
+.steps {
+    font-size: 25px;
+    color: gray;
+    margin-bottom: 10px;
+    font-weight: normal;
+    text-align: right;
+}
+
+.fieldlabels {
+    color: gray;
+    text-align: left;
+}
+
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: lightgrey;
+    padding: 0px;
+}
+
+#progressbar .active {
+    color: #d88713;
+}
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 15px;
+    width: 20%;
+    float: left;
+    position: relative;
+    font-weight: 400;
+}
+
+#progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f007";
+}
+
+#progressbar #personal:before {
+    font-family: 'FontAwesome';
+    content: "\f007";
+}
+
+#progressbar #bank:before {
+    font-family: 'FontAwesome';
+    content: "\f171";
+}
+
+#progressbar #payment:before {
+    font-family: 'FontAwesome';
+    content: "\f030";
+}
+
+#progressbar #confirm:before {
+    font-family: 'FontAwesome';
+    content: "\f00c";
+}
+
+#progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 20px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px;
+}
+
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1;
+}
+
+#progressbar li.active:before,
+#progressbar li.active:after {
+    background: #d88713;
+}
+
+.progress {
+    height: 20px;
+}
+
+.progress-bar {
+    background-color: #673AB7;
+}
+
+.fit-image {
+    width: 100%;
+    object-fit: cover;
+}
+
+#regForm .form-control.invalid {
+    background-color: #ffdddd;
+}
+
+.send_otp_phone {
+    height: 34px;
+    vertical-align: middle;
+    padding: 0 7px;
+    width: 106px !important;
+}
+
+#enter_phone,
+#enter_email,
+#enter_otp_phone,
+#enter_otp_email {
+    width: 86% !important;
+    float: left;
+    margin-right: 8px;
+}
+
+.enter_otp_phone,
+.enter_otp_email {
+    display: none;
+}
+
+.enter_phone_err,
+.enter_email_err,
+.enter_otp_phone_err,
+.enter_otp_email_err {
+    clear: both;
+    margin: 0px;
+    padding: 0px;
+    color: red;
+}
+
+.enter_otp_phone,
+.enter_otp_email {
+    clear: both;
+    margin: 0px;
+    padding: 0px;
+    color: green;
+}
+
+.otp_phone_verify {
+    width: 106px !important;
+    height: 34px;
+}
+
+.razorpay_payment {
+    width: auto !important;
+}
+
+.success_tab {
+    width: 300px;
+    margin: auto;
+}
+
+.shop_manager_reg {
+    width: 100%;
+    margin: auto;
+    border: solid 1px silver;
+    padding: 0px 15px;
+}
+
+#cover-spin {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
+    display: none;
+}
+
+@-webkit-keyframes spin {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#cover-spin::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 48%;
+    top: 40%;
+    width: 40px;
+    height: 40px;
+    border-style: solid;
+    border-color: black;
+    border-top-color: transparent;
+    border-width: 4px;
+    border-radius: 50%;
+    -webkit-animation: spin .8s linear infinite;
+    animation: spin .8s linear infinite;
+}
+
+@media only screen and (max-width: 767px) {
+    #heading {
+        font-size: 22px;
+    }
+    #progressbar li {
+        width: 100%;
+        float: none;
+    }
+    #regForm label {
+        margin-bottom: 0px;
+        font-size: 15px;
+    }
+    #regForm input,
+    #regForm textarea {
+        margin-bottom: 6px;
+        margin-top: 0px;
+    }
+    .regForm .form-card fieldset {
+        padding: 0px;
+    }
+    .form-card .col-xs-12 {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+    #regForm .form-card .row {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    #regForm .form-card .phone-number .enter_phone .form-control {
+        width: 100% !important;
+        margin-right: 0px;
+    }
+    #regForm .form-card input[type="button"] {
+        width: 100% !important;
+        background-color: #fdb143;
+        color: #ffffff;
+    }
+}
+
+#regForm .action-button:hover,
+#regForm .action-button:focus {
+    background-color: #ef3636;
+}
+
+.form-control {
+    height: auto!important;
+}

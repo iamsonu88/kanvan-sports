@@ -1,0 +1,32 @@
+.skt-builder-column{min-height: 1px;}
+
+.skt-builder-block-title h2{}
+.skt-builder-block-title h2 small{display: block; font-size: 22px; font-weight: 400;}
+.skt-builder-block-title .skt-builder-block-title-separator{background-color: #685031; display: inline-block; height: 2px; margin-top: 25px; width: 40px;}
+
+.skt-builder-block-button, .skt-builder-block-button2{background-color: #685031; color: #fff; padding: 14px 35px; border-radius: 40px; display: inline-block; margin-top: 40px; line-height: normal; text-align: center;}
+.skt-builder-block-button:hover, .skt-builder-block-button2:hover{background-color: #ff7e00; color: #fff;}
+
+/*Section 1*/
+.skt-builder-home-section1-block .promo2{margin: 0;}
+.skt-builder-home-section1-block .skt-builder-block-description{margin: 0;}
+.skt-builder-home-section1-block .skt-builder-block-description p:first-child{margin: 0;}
+.skt-builder-home-section1-block .promo-right{margin: 1% 0 0 0;}
+
+/*Section 2*/
+.skt-builder-featured-column .skt-builder-column-inner{border: solid 1px #eaeaea; padding: 25px; text-align: center; transition: all 0.3s;}
+.skt-builder-featured-column .skt-builder-column-inner:hover{transform: scale(1.1);}
+.skt-builder-featured-column .skt-builder-featured-column-image{display: inline-block;}
+.skt-builder-featured-column .skt-builder-featured-column-title{font-size: 20px; font-weight: 400; margin: 20px 0 15px;}
+.skt-builder-featured-column .skt-builder-block-button{margin-top: 0; border-radius: 4px; padding: 8px 25px;}
+
+/*Section 4*/
+.skt-builder-home-section4-block .skt-builder-testimonial-carousel-content .skt-builder-testimonial-carousel-image{left: 25px; margin: 0; top: auto; height: 90px; width: 90px; right: auto;}
+.skt-builder-home-section4-block .skt-builder-testimonial-carousel-content{padding: 30px; padding-left: 170px;}
+.skt-builder-home-section4-block .skt-builder-testimonial-carousel-content .skt-builder-testimonial-carousel-quote{font-size: 15px; margin-bottom: 0; position: absolute; left: 140px;}
+.skt-builder-home-section4-block .skt-builder-testimonial-carousel-content .skt-builder-testimonial-carousel-title{font-size: 15px; margin: 20px 0 2px; text-align: right;}
+.skt-builder-home-section4-block .skt-builder-testimonial-carousel-content .skt-builder-testimonial-carousel-info{text-align: right;}
+.skt-builder-home-section4-block .skt-builder-carousel.skt-builder-carousel-bullets-style2 .owl-dots .owl-dot{height: 12px; width: 12px;}
+.skt-builder-home-section4-block .skt-builder-carousel .owl-dots{margin-top: 15px;}
+
+.sktbuilder-map-iframe{display: block; margin: 0 auto;}
