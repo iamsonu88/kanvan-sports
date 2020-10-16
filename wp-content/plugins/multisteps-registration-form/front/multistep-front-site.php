@@ -1,976 +1,717 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-<?php
 
-
-global $wpdb;
-if(null!==$_POST['orderId'] && $_POST['txStatus']=='SUCCESS') {
-	$email_id=base64_decode($_GET['email_id']);
-	$user_data=get_user_by_email($email_id);
-	$user_id=$user_data->data->ID;
-	$user_activation_key=$user_data->data->user_activation_key;
-	foreach($_POST as $key=>$data){
-		add_user_meta( $user_id, $key, $data);
-	}
-	update_user_meta( $user_id, 'payment_status', 'success' );
-	//session_destroy();
-
-	$to = $email_id;
-	$subject = "Verification Mail from Super Markeet";
-	$txt = "Hello ".$email_id.". Thanks for registering with us. Please check your email to activate your account!";
-	$emailTxt = "Hello ".$email_id.". <br/><br/> Thanks for registering with us. <br/>Please click on below link for activate account!<br/><br/>".get_permalink()."?email_id=".$email_id."&activation_key=".$user_activation_key;
-	$user_meta_data=get_user_meta( $user_id );
-	$phone_number=$user_meta_data['phone_number'][0];
-	send_success_sms($phone_number, $txt);
-	$message='<section class="full-page container" style="padding-top: 1rem; width: 100%; clear: both;">
-		<div class="heading-one" style="padding: 18px 30px 98px 30px; background-color: #fdb143; color: #fff; font-size: 24px; clear: both;">
-			<div style="width: 22%; float: left;"><a href="https://www.supermarkeet.com/" title="Super Markeet"><img style="width: 80%;" src="https://www.supermarkeet.com/wp-content/uploads/2020/08/cropped-supermarkeet.png" alt="Super Markeet Logo" /></a> </div>
-			<h1 style="margin-top: 0px; float: left;  width: 70%;">Welcome to Super Markeet</h1>
-		</div>
-		<div style="clear: both; margin-left: 2%; margin-bottom: 4%; font-size: 18px;">
-			<span style="font-size: 30px;">Your Payment Invoice</span>
-    		<table style="text-align: left; color: black; width: 60%;">
-				<tr>
-					<th style="font-weight: 100; width: 44%;">Registration Charges</th>
-					<td style="width: 10%;"> : </td>
-					<td style="font-weight: 600; width: 40%;"> 199 INR</td>
-				</tr>
-				<tr>
-					<th style="font-weight: 100; width: 44%;">GST Charges:</th>
-					<td style="width: 10%;"> : </td>
-					<td style="font-weight: 600;  width: 40%;"> 35.82 INR</td>
-				</tr>
-				<tr>
-					<td colspan="3" style="border-top: 1px solid black;"></td>
-				</tr>
-				<tr>
-					<th style="font-weight: 100; width: 44%;">Total Cost:</th>
-					<td style="width: 10%;"> : </td>
-					<td style="font-weight: 600;  width: 40%;"> 234.82 INR  : (Round) - 235 INR</td>
-				</tr>
-			</table>
-		</div>
-		<div class="sub-title" style="padding: 16px; border: 1px solid #ddd;">'.$emailTxt.'</div>
-	</section>';
-	$from = 'support@supermarkeet.com';
-	$headers  = 'MIME-Version: 1.0' . "\r\n";
-	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
- 	// Create email headers
-	$headers .= 'From: '.$from."\r\n". 'Reply-To: '.$from."\r\n" . 'X-Mailer: PHP/' . phpversion();
-	if(mail($to,$subject,$message,$headers)) {
-		echo 'Your mail has been sent successfully.';
-	} else {
-		echo 'Unable to send email. Please try again.';
-	}
-
-
-	$success_msg="You have successfully pay for Shop manager Account. Please verify the account using email!";
-	echo "<script>swal('Success','".$success_msg."','success')</script>";
-	echo "<script>setTimeout(function(){ window.location.href='".home_url()."'; }, 5000)</script>";
-}
-if(null!==$_POST['orderId'] && $_POST['txStatus']=='CANCELLED') {
-	$email_id=base64_decode($_GET['email_id']);
-	$user_data=get_user_by_email($email_id);
-	$user_id=$user_data->data->ID;
-	$user_activation_key=$user_data->data->user_activation_key;
-	foreach($_POST as $key=>$data){
-		add_user_meta( $user_id, $key, $data);
-	}
-	update_user_meta( $user_id, 'payment_status', 'failure' );
-	//session_destroy();
-
-	$to = $email_id;
-	$subject = "Verification Mail from Super Markeet";
-	$txt = "Hello ".$email_id.". Thanks for showing interest in us. Due to some reason, payment got fail. Please try again.";
-	$emailTxt = "Hello ".$email_id.". <br/><br/> Thanks for showing interest in us. <br/>Please try again as your payment got fail.";
-	$user_meta_data=get_user_meta( $user_id );
-	$phone_number=$user_meta_data['phone_number'][0];
-	send_success_sms($phone_number, $txt);
-	$message='<section class="full-page container" style="padding-top: 1rem; width: 100%; clear: both;">
-		<div class="heading-one" style="padding: 18px 30px 98px 30px; background-color: #fdb143; color: #fff; font-size: 24px; clear: both;">
-			<div style="width: 22%; float: left;"><a href="https://www.supermarkeet.com/" title="Super Markeet"><img style="width: 80%;" src="https://www.supermarkeet.com/wp-content/uploads/2020/08/cropped-supermarkeet.png" alt="Super Markeet Logo" /></a> </div>
-			<h1 style="margin-top: 0px; float: left;  width: 70%;">Welcome to Super Markeet</h1>
-		</div>
-		<div class="sub-title" style="padding: 16px; border: 1px solid #ddd;">'.$emailTxt.'</div>
-	</section>';
-	$from = 'support@supermarkeet.com';
-	$headers  = 'MIME-Version: 1.0' . "\r\n";
-	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
- 	// Create email headers
-	$headers .= 'From: '.$from."\r\n". 'Reply-To: '.$from."\r\n" . 'X-Mailer: PHP/' . phpversion();
-	if(mail($to,$subject,$message,$headers)) {
-		echo 'Your mail has been sent successfully.';
-	} else {
-		echo 'Unable to send email. Please try again.';
-	}
-
-
-	$success_msg="You have unsuccessfully pay for Shop manager Account. Please try again.";
-	echo "<script>swal('Success','".$success_msg."','success')</script>";
-	echo "<script>setTimeout(function(){ window.location.href='".home_url()."'; }, 5000)</script>";
-}
-if((null!==$_GET['email_id']) && (null!==$_GET['razorpay_payment_id'])){
-	$email_id=base64_decode($_GET['email_id']);
-	$razorpay_payment_id=base64_decode($_GET['razorpay_payment_id']);
-	$user_data=get_user_by_email($email_id);
-	$user_id=$user_data->data->ID;
-	$user_activation_key=$user_data->data->user_activation_key;
-	add_user_meta( $user_id, 'razorpay_payment_id', $razorpay_payment_id );
-	update_user_meta( $user_id, 'payment_status', 'success' );
-	//session_destroy();
-
-	$to = $email_id;
-	$subject = "Verification Mail from Super Markeet";
-	$txt = "Hello ".$email_id.". Thanks for registering with us. Please check your email to activate your account!";
-	$emailTxt = "Hello ".$email_id.". <br/><br/> Thanks for registering with us. <br/>Please click on below link for activate account!<br/><br/>".get_permalink()."?email_id=".$email_id."&activation_key=".$user_activation_key;
-	$user_meta_data=get_user_meta( $user_id );
-	$phone_number=$user_meta_data['phone_number'][0];
-	send_success_sms($phone_number, $txt);
-	$message='<section class="full-page container" style="padding-top: 1rem; width: 100%; clear: both;">
-		<div class="heading-one" style="padding: 18px 30px 98px 30px; background-color: #fdb143; color: #fff; font-size: 24px; clear: both;">
-			<div style="width: 22%; float: left;"><a href="https://www.supermarkeet.com/" title="Super Markeet"><img style="width: 80%;" src="https://www.supermarkeet.com/wp-content/uploads/2020/08/cropped-supermarkeet.png" alt="Super Markeet Logo" /></a> </div>
-			<h1 style="margin-top: 0px; float: left;  width: 70%;">Welcome to Super Markeet</h1>
-		</div>
-		<div style="clear: both; margin-left: 2%; margin-bottom: 4%; font-size: 18px;">
-			<span style="font-size: 30px;">Your Payment Invoice</span>
-    		<table style="text-align: left; color: black; width: 60%;">
-				<tr>
-					<th style="font-weight: 100; width: 44%;">Registration Charges</th>
-					<td style="width: 10%;"> : </td>
-					<td style="font-weight: 600; width: 40%;"> 199 INR</td>
-				</tr>
-				<tr>
-					<th style="font-weight: 100; width: 44%;">GST Charges:</th>
-					<td style="width: 10%;"> : </td>
-					<td style="font-weight: 600;  width: 40%;"> 35.82 INR</td>
-				</tr>
-				<tr>
-					<td colspan="3" style="border-top: 1px solid black;"></td>
-				</tr>
-				<tr>
-					<th style="font-weight: 100; width: 44%;">Total Cost:</th>
-					<td style="width: 10%;"> : </td>
-					<td style="font-weight: 600;  width: 40%;"> 234.82 INR  : (Round) - 235 INR</td>
-				</tr>
-			</table>
-		</div>
-		<div class="sub-title" style="padding: 16px; border: 1px solid #ddd;">'.$emailTxt.'</div>
-	</section>';
-
-	$from = 'support@supermarkeet.com';
-	$headers  = 'MIME-Version: 1.0' . "\r\n";
-	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
- 	// Create email headers
-	$headers .= 'From: '.$from."\r\n". 'Reply-To: '.$from."\r\n" . 'X-Mailer: PHP/' . phpversion();
-	if(mail($to,$subject,$message,$headers)) {
-		echo 'Your mail has been sent successfully.';
-	} else {
-		echo 'Unable to send email. Please try again.';
-	}
-	$success_msg="You have successfully pay for Shop manager Account. Please verify the account using email!";
-	echo "<script>swal('Success','".$success_msg."','success')</script>";
-	echo "<script>setTimeout(function(){ window.location.href='".home_url()."'; }, 5000)</script>";
-}
-if(null!==$_GET['email_id'] && null!==$_GET['activation_key']){
-	$email_id=$_GET['email_id'];
-	$activation_key=$_GET['activation_key'];
-	$get_user = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."users WHERE user_email='".$email_id."' AND user_activation_key='".$activation_key."'");
-	if(count($get_user)>0){
-		$user_data=get_user_by_email($email_id);
-		$user_id=$user_data->data->ID;
-		$wp_user_object = new WP_User($user_id);
-		$wp_user_object->set_role('shop_manager');
-		$wpdb->update(
-			$wpdb->prefix."users",
-			array("user_activation_key"=>""),
-			array("ID"=>$get_user[0]->ID)
-		);
-		$to = $email_id;
-		$subject = "Activation Mail";
-		$user_meta_data=get_user_meta( $user_id );
-		$password=$user_meta_data['password'][0];
-		$txt = "Hello ".$get_user[0]->display_name.". <br/><br/> You account has activated successfully. Your username is ".$get_user[0]->user_login.". You can access your account area to view orders, change your password, and more.<br/><b>Username:<b/> ".$get_user[0]->user_login." <br/><b>Password:<b/> ".$password." <br/><br/><a href='".home_url()."/my-account'>Please click here for login</a>!";
-		$phone_number=$user_meta_data['phone_number'][0];
-		send_success_sms($phone_number, $txt);
-		$message='<section class="full-page container" style="padding-top: 1rem; width: 100%; clear: both;">
-			<div class="heading-one" style="padding: 18px 30px 98px 30px; background-color: #fdb143; color: #fff; font-size: 24px; clear: both;">
-				<div style="width: 22%; float: left;">
-					<a href="https://www.supermarkeet.com/" title="Super Markeet"><img style="width: 80%;" src="https://www.supermarkeet.com/wp-content/uploads/2020/08/cropped-supermarkeet.png" alt="Super Markeet Logo" /></a>
-				</div>
-				<h1 style="margin-top: 0px; float: left;  width: 70%;">Welcome to Super Markeet</h1>
-			</div>
-			<div class="sub-title" style="padding: 16px; border: 1px solid #ddd; padding-left: 30px;">'.$txt.'</div>
-		</section>';
-		// $headers = "From: info@kanvan.in";
-		$from = 'support@supermarkeet.com';
-		$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-		// mail($to,$subject,$message,$headers);
-		$headers .= 'From: '.$from."\r\n". 'Reply-To: '.$from."\r\n" . 'X-Mailer: PHP/' . phpversion();
-		if(mail($to,$subject,$message,$headers)) {
-			echo 'Your mail has been sent successfully.';
-		} else {
-			echo 'Unable to send email. Please try again.';
-		}
-
-		$to = "support@supermarkeet.com";
-		$subject = "Activation Mail Update";
-		$txt = "Hello Admin. <br/><br/>".$get_user[0]->display_name."(".$email_id.") has recently registered with supermarkeet as a vendor!";
-		$user_meta_data=get_user_meta( $user_id );
-		$phone_number=$user_meta_data['phone_number'][0];
-		send_success_sms($phone_number, $txt);
-		$message='<section class="full-page container" style="padding-top: 1rem; width: 100%; clear: both;">
-			<div class="heading-one" style="padding: 18px 30px 98px 30px; background-color: #fdb143; color: #fff; font-size: 24px; clear: both;">
-				<div style="width: 30%; float: left;"><a href="https://www.supermarkeet.com/" title="Super Markeet"><img style="width: 80%;" src="https://www.supermarkeet.com/wp-content/uploads/2020/08/cropped-supermarkeet.png" alt="Super Markeet Logo" /></a> </div>
-				<h1 style="margin-top: 0px; float: left;  width: 70%;">Welcome to Super Markeet</h1>
-			</div>
-			<div class="sub-title" style="padding: 16px; border: 1px solid #ddd; padding-left: 30px;">'.$txt.'</div>
-		</section>';
-
-
-		$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-		// Create email headers
-		$headers .= 'From: '.$email_id."\r\n". 'Reply-To: '.$email_id."\r\n" . 'X-Mailer: PHP/' . phpversion();
-		if(mail($to,$subject,$message,$headers)) {
-			echo 'Your mail has been sent successfully.';
-		} else {
-			echo 'Unable to send email. Please try again.';
-		}
-
-		$success_msg="User Activated successfully!";
-		echo "<script>swal('Success','".$success_msg."','success')</script>";
-		echo "<script>setTimeout(function(){ window.location.href='".home_url()."/login'; }, 5000)</script>";
-	}
-	else{
-		$error_msg="Activation key is wrong!";
-		echo "<script>swal('Error','".$error_msg."','error')</script>";
-	}
-}
-function is_required($field_name){
-	global $wpdb;
-	$get_data=$wpdb->get_results("SELECT * FROM {$wpdb->prefix}multistep_option WHERE opt='required_field' and field='".$field_name."'");
-	if(count($get_data)>0){
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-function send_success_sms($phone_number, $text_message){
-	$handle = curl_init();
-	$url = "https://api.textlocal.in/send/?apiKey=Jz0sPt9cSBc-5uSObptlg2rnrvqAHHiaYKNCBSjxll&sender=TXTLCL&numbers=91".$phone_number."&message=".urlencode(strip_tags($text_message));
-	// Set the url
-	curl_setopt($handle, CURLOPT_URL, $url);
-	// Set the result output to be a string.
-	curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-	$output = curl_exec($handle);
-	curl_close($handle);
-}
-$user_data=$_SESSION['user_data'];
-?>
-
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Registration Form </title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
 <style>
-* {
-    margin: 0;
-    padding: 0
+.box
+{
+width:800px;
+margin:0 auto;
 }
-
-html {
-    height: 100%
+.active_tab1
+{
+background-color:#fff;
+color:#333;
+font-weight: 600;
 }
-
-p {
-    color: grey
+.inactive_tab1
+{
+background-color: #f5f5f5;
+color: #333;
+cursor: not-allowed;
 }
-
-#heading {
-    text-transform: uppercase;
-    color: #673AB7;
-    font-weight: normal
+.has-error
+{
+border-color:#cc0000;
+background-color:#ffff99;
 }
-
-#msform {
-    text-align: center;
+.checkbox-inline, .radio-inline {
     position: relative;
-    margin-top: 20px
-}
-
-#msform fieldset {
-    background: white;
-    border: 0 none;
-    border-radius: 0.5rem;
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0;
-    padding-bottom: 20px;
-    position: relative
-}
-
-.form-card {
-    text-align: left
-}
-
-#msform fieldset:not(:first-of-type) {
-    display: none
-}
-
-#msform input,
-#msform textarea {
-    padding: 8px 15px 8px 15px;
-    border: 1px solid #ccc;
-    border-radius: 0px;
-    margin-bottom: 25px;
-    margin-top: 2px;
-    width: 100%;
-    box-sizing: border-box;
-    font-family: montserrat;
-    color: #2C3E50;
-    background-color: #ECEFF1;
-    font-size: 16px;
-    letter-spacing: 1px
-}
-
-#msform input:focus,
-#msform textarea:focus {
-    -moz-box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    border: 1px solid #673AB7;
-    outline-width: 0
-}
-
-#msform .action-button {
-    width: 100px;
-    background: #673AB7;
-    font-weight: bold;
-    color: white;
-    border: 0 none;
-    border-radius: 0px;
+    display: inline-block;
+    padding-left: 35px!important;
+    margin-bottom: 0;
+    font-weight: 400;
+    vertical-align: middle;
     cursor: pointer;
-    padding: 10px 5px;
-    margin: 10px 0px 10px 5px;
-    float: right
 }
-
-#msform .action-button:hover,
-#msform .action-button:focus {
-    background-color: #311B92
-}
-
-#msform .action-button-previous {
-    width: 100px;
-    background: #616161;
-    font-weight: bold;
-    color: white;
-    border: 0 none;
-    border-radius: 0px;
-    cursor: pointer;
-    padding: 10px 5px;
-    margin: 10px 5px 10px 0px;
-    float: right
-}
-
-#msform .action-button-previous:hover,
-#msform .action-button-previous:focus {
-    background-color: #000000
-}
-
-.card {
-    z-index: 0;
-    border: none;
-    position: relative
-}
-
-.fs-title {
-    font-size: 25px;
-    color: #673AB7;
-    margin-bottom: 15px;
-    font-weight: normal;
-    text-align: left
-}
-
-.purple-text {
-    color: #673AB7;
-    font-weight: normal
-}
-
-.steps {
-    font-size: 25px;
-    color: gray;
-    margin-bottom: 10px;
-    font-weight: normal;
-    text-align: right
-}
-
-.fieldlabels {
-    color: gray;
-    text-align: left
-}
-
-#progressbar {
-    margin-bottom: 30px;
-    overflow: hidden;
-    color: lightgrey
-}
-
-#progressbar .active {
-    color: #673AB7
-}
-
-#progressbar li {
-    list-style-type: none;
-    font-size: 15px;
-    width: 25%;
-    float: left;
-    position: relative;
-    font-weight: 400
-}
-
-#progressbar #account:before {
-    font-family: FontAwesome;
-	/* content: "\f13e" */
-	content: "\f0fa";
-}
-
-#progressbar #personal:before {
-    font-family: FontAwesome;
-    content: "\f007"
-}
-
-#progressbar #payment:before {
-    font-family: FontAwesome;
-    content: "\f030"
-}
-
-#progressbar #confirm:before {
-    font-family: FontAwesome;
-    content: "\f00c"
-}
-
-#progressbar li:before {
-    width: 50px;
-    height: 50px;
-    line-height: 45px;
-    display: block;
-    font-size: 20px;
-    color: #ffffff;
-    background: lightgray;
-    border-radius: 50%;
-    margin: 0 auto 10px auto;
-    padding: 2px
-}
-
-#progressbar li:after {
-    content: '';
-    width: 100%;
-    height: 2px;
-    background: lightgray;
-    position: absolute;
-    left: 0;
-    top: 25px;
-    z-index: -1
-}
-
-#progressbar li.active:before,
-#progressbar li.active:after {
-    background: #673AB7
-}
-
-.progress {
-    height: 20px
-}
-
-.progress-bar {
-    background-color: #673AB7
-}
-
-.fit-image {
-    width: 100%;
-    object-fit: cover
-}
-
 </style>
+</head>
+<body>
+<br />
+<div class="container box">
+<br />
+<!-- <h2>Registration Form</h2><br /> -->
+<?php echo $message; ?>
+<form method="post" id="register_form">
+<ul class="nav nav-tabs">
 
-<div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-11 col-sm-10 col-md-10 col-lg-6 col-xl-9 text-center p-0 mt-3 mb-2">
-            <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
-                <h2 id="heading">Sign Up Your User Account</h2>
-                <p>Fill all form field to go to next step</p>
-                <form id="msform">
-                    <!-- progressbar -->
-                    <ul id="progressbar">
-					<li class="active" id="personal"><strong>Personal</strong></li>
-                        <li  id="account"><strong>Medical </strong></li>
-                       
-                        <li id="payment"><strong>Image</strong></li>
-                        <li id="confirm"><strong>Finish</strong></li>
-                    </ul>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div> <br> <!-- fieldsets -->
-                    <fieldset>
-                        <div class="form-card">
-                            <div class="row">
-                                <div class="col-7">
-                                    <h2 class="fs-title">Account Information:</h2>
-                                </div>
-                                <div class="col-5">
-                                    <h2 class="steps">Step 1 - 4</h2>
-                                </div>
-                            </div>
-							<label class="fieldlabels">Name: *</label> 
-							<input type="text" name="fullname" placeholder="enter name" /> 
-							<label class="fieldlabels">Date: *</label> 
-							<input type="Date" name="date" placeholder="enter date" /> 
-							<label class="fieldlabels">Phone Number *</label> 
-							<input type="tel" name="phone" placeholder="enter number" /> 
-							 <label class="fieldlabels">Email: *</label> 
-							<input type="email" name="email" placeholder="Email Id" /> 
-							<label class="fieldlabels">Date of Birth *</label> 
-							<input type="date" name="dob" placeholder="Email birth" /> 
-							<label class="fieldlabels">Age*</label> 
-							<input type="number" name="age" placeholder="Email age" /> 
-							<label class="fieldlabels">Height*</label> 
-							<input type="number" name="height" placeholder="Email height" /> 
-							<label class="fieldlabels">weight*</label> 
-							<input type="number" name="weight" placeholder="Email weight" /> 
-							<label class="fieldlabels">In Case of Emergency Contact *</label>
-							 <input type="number" name="contact" placeholder="enter number" /> 
-							 <label class="fieldlabels">Relationship *</label>
-							  <input type="text" name="relationship" placeholder="enter " />
-							   <label class="fieldlabels">Address: *</label> 
-							   <input type="text" name="address" placeholder="enter address" />
-                        </div> <input type="button" name="next" class="next action-button" value="Next" />
-                    </fieldset>
-                    <fieldset>
-                        <div class="form-card">
-                            <div class="row">
-                                <div class="col-7">
-                                    <h2 class="fs-title">Personal Information:</h2>
-                                </div>
-                                <div class="col-5">
-                                    <h2 class="steps">Step 2 - 4</h2>
-                                </div>
-                            </div> <label class="fieldlabels">First Name: *</label> <input type="text" name="fname" placeholder="First Name" /> <label class="fieldlabels">Last Name: *</label> <input type="text" name="lname" placeholder="Last Name" /> <label class="fieldlabels">Contact No.: *</label> <input type="text" name="phno" placeholder="Contact No." /> <label class="fieldlabels">Alternate Contact No.: *</label> <input type="text" name="phno_2" placeholder="Alternate Contact No." />
-                        </div> <input type="button" name="next" class="next action-button" value="Next" /> <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
-                    </fieldset>
-                    <fieldset>
-                        <div class="form-card">
-                            <div class="row">
-                                <div class="col-7">
-                                    <h2 class="fs-title">Image Upload:</h2>
-                                </div>
-                                <div class="col-5">
-                                    <h2 class="steps">Step 3 - 4</h2>
-                                </div>
-                            </div> <label class="fieldlabels">Upload Your Photo:</label> <input type="file" name="pic" accept="image/*"> <label class="fieldlabels">Upload Signature Photo:</label> <input type="file" name="pic" accept="image/*">
-                        </div> <input type="button" name="next" class="next action-button" value="Submit" /> <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
-                    </fieldset>
-                    <fieldset>
-                        <div class="form-card">
-                            <div class="row">
-                                <div class="col-7">
-                                    <h2 class="fs-title">Finish:</h2>
-                                </div>
-                                <div class="col-5">
-                                    <h2 class="steps">Step 4 - 4</h2>
-                                </div>
-                            </div> <br><br>
-                            <h2 class="purple-text text-center"><strong>SUCCESS !</strong></h2> <br>
-                            <div class="row justify-content-center">
-                                <div class="col-3"> <img src="https://i.imgur.com/GwStPmg.png" class="fit-image"> </div>
-                            </div> <br><br>
-                            <div class="row justify-content-center">
-                                <div class="col-7 text-center">
-                                    <h5 class="purple-text text-center">You Have Successfully Signed Up</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
-        </div>
-    </div>
+<li class="nav-item">
+<a class="nav-link inactive_tab1" id="list_personal_details" style="border:1px solid #ccc">Personal Details</a>
+</li>
+<li class="nav-item">
+<a class="nav-link inactive_tab1" id="list_contact_details" style="border:1px solid #ccc">Medical Details</a>
+</li>
+<li class="nav-item">
+<a class="nav-link active_tab1" style="border:1px solid #ccc" id="list_login_details"> finish</a>
+</li>
+
+</ul>
+<div class="tab-content" style="margin-top:16px;">
+<div class="tab-pane active" id="login_details">
+<div class="panel panel-default">
+<div class="panel-heading">Login Details</div>
+<div class="panel-body">
+<div class="form-group">
+<label>Name: *</label> 
+<input type="text" name="fullname" class="form-control" placeholder="enter name" /> 
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Date: *</label> 
+<input type="Date" name="date" class="form-control" placeholder="enter date" /> 
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Phone Number *</label> 
+<input type="tel" name="phone" class="form-control" placeholder="enter number" /> 
+<!-- <span id="error_email" class="text-danger"></span> -->
 </div>
 
+<div class="form-group">
+<label>Date of Birth *</label> 
+<input type="date" name="dob" class="form-control" placeholder="birth" /> 
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Age *</label> 
+<input type="number" name="age" class="form-control" placeholder="age" /> 
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Height *</label> 
+<input type="number" name="height" class="form-control" placeholder="height" /> 
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>weight *</label> 
+<input type="number" name="weight" class="form-control" placeholder="weight" /> 
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>In Case of Emergency Contact *</label>
+<input type="number" name="contact"  class="form-control" placeholder="enter number" /> 
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Relationship *</label>
+<input type="text" name="relationship" class="form-control" placeholder="enter " / >
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Address: *</label> 
+<input type="text" name="address" id="address" class="form-control"  placeholder="enter address " / />
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Email Id</label>
+<input type="text" name="email" id="email" class="form-control" />
+<span id="error_email" class="text-danger"></span>
+</div>
+<div class="form-group">
+         <label>Enter Password</label>
+         <input type="password" name="password" id="password" class="form-control" />
+         <span id="error_password" class="text-danger"></span>
+        </div>
+<br />
+<div>
+<button type="button" name="btn_login_details" id="btn_login_details" class="btn btn-info btn-lg">Next</button>
+</div>
+<br />
+</div>
+</div>
+</div>
+<div class="tab-pane fade" id="personal_details">
+<div class="panel panel-default">
+<div class="panel-heading">Fill Personal Details</div>
+<div class="panel-body">
+<div class="form-group">
+<label>Are you currently under a doctor’s care<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>If yes, explain *</label>
+<input type="text" name="relationship" class="form-control" placeholder="enter " / >
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>When was the last time you had a physical examination?  *</label>
+<input type="text" name="relationship" class="form-control" placeholder="enter " / >
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Have you ever had an exercise stress test *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> Don’t Know
+</label>
+</div>
+<div class="form-group">
+<label>Have you ever had an exercise stress test *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Normal
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> Abnormal
+</label>
+</div>
+<div class="form-group">
+<label>Have you ever had an exercise stress test *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>If yes, please list medications and reasons for taking *</label>
+<input type="text" name="relationship" class="form-control" placeholder="enter " / >
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Have you been recently hospitalized? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>If yes, explain *</label>
+<input type="text" name="relationship" class="form-control" placeholder="enter " / >
+<!-- <span id="error_email" class="text-danger"></span> -->
+</div>
+<div class="form-group">
+<label>Do you smoke? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Are you pregnant? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+
+<div class="form-group">
+<label>Do you drink alcohol more than three times/week? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Is your stress level high? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Are you moderately active on most days of the week? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<h4>Do you have: </h4>
+<div class="form-group">
+<label>High blood pressure? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>High cholesterol? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Diabetes? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Have parents or siblings who, prior to age 55 had *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>A heart attack? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>A stroke? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>High blood pressure? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>High cholesterol?*<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Known heart disease? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Rheumatic heart disease? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>A heart murmur? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Chest pain with exertion? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Irregular heart beat or palpitations? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Lightheadedness or do you faint? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Unusual shortness of breath? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Cramping pains in legs or feet? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Emphysema? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Other metabolic disorders (thyroid, kidney, etc.)? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Epilepsy? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Asthma? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Back pain: upper, middle, lower? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Other joint pain (explain on back of form)? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+<div class="form-group">
+<label>Muscle pain or an injury (explain on back of Form)? *<label>
+<label class="radio-inline">
+<input type="radio" name="option" value="male" checked>Yes
+</label>
+<label class="radio-inline">
+<input type="radio" name="option" value="female"> No
+</label>
+</div>
+
+<h5>To the best of my knowledge, the above information is true.</h5>
+
+<div class="form-group">
+<label>Sign Name (Type your name) *</label>
+<input type="text" name="first_name" id="first_name" class="form-control" />
+<span id="error_first_name" class="text-danger"></span>
+</div>
+<div class="form-group">
+<label>Date *</label>
+<input type="date" name="last_name" id="last_name" class="form-control" />
+<span id="error_last_name" class="text-danger"></span>
+</div>
+
+</div>
+<br />
+<div>
+<button type="button" name="previous_btn_personal_details" id="previous_btn_personal_details" class="btn btn-default btn-lg">Previous</button>
+<button type="button" name="btn_personal_details" id="btn_personal_details" class="btn btn-info btn-lg">Next</button>
+</div>
+<br />
+</div>
+</div>
+</div>
+<div class="tab-pane fade" id="contact_details">
+<div class="panel panel-default">
+<div class="panel-heading">Fill Contact Details</div>
+<div class="panel-body">
+<div class="form-group">
+<label>Enter Address</label>
+<textarea name="address" id="address" class="form-control"></textarea>
+<span id="error_address" class="text-danger"></span>
+</div>
+<div class="form-group">
+<label>Enter Mobile No.</label>
+<input type="text" name="mobile_no" id="mobile_no" class="form-control" />
+<span id="error_mobile_no" class="text-danger"></span>
+</div>
+<br />
+<div>
+<button type="button" name="previous_btn_contact_details" id="previous_btn_contact_details" class="btn btn-default btn-lg">Previous</button>
+<input type="submit" name="btn_contact_details" id="btn_contact_details" class="btn btn-success btn-lg" value="Register" />
+</div>
+<br />
+</div>
+</div>
+</div>
+</div>
+</form>
+</div>
+</body>
+
+<?php
+
+global $wpdb;
+// print_r($_POST);
+// if(isset($_POST['btn_contact_details'])){
+$testQuery = "INSERT INTO multi_step(dob,age,height) VALUES ('".$_POST['dob']."','".$_POST['age']."','".$_POST['height']."')";
+
+// $testQuery = "INSERT INTO sports( array('fname' => $_POST['first_name'], 'lname' => $_POST['last_name'],
+// 'email' => $_POST['email'], 'mobile' => $_POST['mobile_no'],'adress'=> $_POST['address'],'gender' => $_POST['gender']))";
+
+// $testQuery = "INSERT INTO sports(fname,lname,email,mobile,adress,gender) VALUES ("."'".$_POST['first_name']."'".","."'".$_POST['last_name']."'".","."'".$_POST['email']."'".","."'".$_POST['mobile_no']."'".","."'".$_POST['address']."'".","."'".$_POST['gender']."'".")";
+$wpdb->query($testQuery);
+// }
+// else{
+// echo "Post Error";
+// }
+?>
+
 
 <script>
-
 $(document).ready(function(){
 
-var current_fs, next_fs, previous_fs; //fieldsets
-var opacity;
-var current = 1;
-var steps = $("fieldset").length;
+$('#btn_login_details').click(function(){
 
-setProgressBar(current);
+var error_email = '';
+var error_password = '';
+var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 
-$(".next").click(function(){
-
-current_fs = $(this).parent();
-next_fs = $(this).parent().next();
-
-//Add Class Active
-$("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-
-//show the next fieldset
-next_fs.show();
-//hide the current fieldset with style
-current_fs.animate({opacity: 0}, {
-step: function(now) {
-// for making fielset appear animation
-opacity = 1 - now;
-
-current_fs.css({
-'display': 'none',
-'position': 'relative'
-});
-next_fs.css({'opacity': opacity});
-},
-duration: 500
-});
-setProgressBar(++current);
-});
-
-$(".previous").click(function(){
-
-current_fs = $(this).parent();
-previous_fs = $(this).parent().prev();
-
-//Remove class active
-$("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
-
-//show the previous fieldset
-previous_fs.show();
-
-//hide the current fieldset with style
-current_fs.animate({opacity: 0}, {
-step: function(now) {
-// for making fielset appear animation
-opacity = 1 - now;
-
-current_fs.css({
-'display': 'none',
-'position': 'relative'
-});
-previous_fs.css({'opacity': opacity});
-},
-duration: 500
-});
-setProgressBar(--current);
-});
-
-function setProgressBar(curStep){
-var percent = parseFloat(100 / steps) * curStep;
-percent = percent.toFixed();
-$(".progress-bar")
-.css("width",percent+"%")
+if($.trim($('#email').val()).length == 0)
+{
+error_email = 'Email is required';
+$('#error_email').text(error_email);
+$('#email').addClass('has-error');
+}
+else
+{
+if (!filter.test($('#email').val()))
+{
+error_email = 'Invalid Email';
+$('#error_email').text(error_email);
+$('#email').addClass('has-error');
+}
+else
+{
+error_email = '';
+$('#error_email').text(error_email);
+$('#email').removeClass('has-error');
+}
 }
 
-$(".submit").click(function(){
+if($.trim($('#password').val()).length == 0)
+{
+error_password = 'Password is required';
+$('#error_password').text(error_password);
+$('#password').addClass('has-error');
+}
+else
+{
+error_password = '';
+$('#error_password').text(error_password);
+$('#password').removeClass('has-error');
+}
+
+if(error_email != '' || error_password != '')
+{
 return false;
-})
+}
+else
+{
+$('#list_login_details').removeClass('active active_tab1');
+$('#list_login_details').removeAttr('href data-toggle');
+$('#login_details').removeClass('active');
+$('#list_login_details').addClass('inactive_tab1');
+$('#list_personal_details').removeClass('inactive_tab1');
+$('#list_personal_details').addClass('active_tab1 active');
+$('#list_personal_details').attr('href', '#personal_details');
+$('#list_personal_details').attr('data-toggle', 'tab');
+$('#personal_details').addClass('active in');
+}
+});
+
+$('#previous_btn_personal_details').click(function(){
+$('#list_personal_details').removeClass('active active_tab1');
+$('#list_personal_details').removeAttr('href data-toggle');
+$('#personal_details').removeClass('active in');
+$('#list_personal_details').addClass('inactive_tab1');
+$('#list_login_details').removeClass('inactive_tab1');
+$('#list_login_details').addClass('active_tab1 active');
+$('#list_login_details').attr('href', '#login_details');
+$('#list_login_details').attr('data-toggle', 'tab');
+$('#login_details').addClass('active in');
+});
+
+$('#btn_personal_details').click(function(){
+var error_first_name = '';
+var error_last_name = '';
+
+if($.trim($('#first_name').val()).length == 0)
+{
+error_first_name = 'First Name is required';
+$('#error_first_name').text(error_first_name);
+$('#first_name').addClass('has-error');
+}
+else
+{
+error_first_name = '';
+$('#error_first_name').text(error_first_name);
+$('#first_name').removeClass('has-error');
+}
+
+if($.trim($('#last_name').val()).length == 0)
+{
+error_last_name = 'Last Name is required';
+$('#error_last_name').text(error_last_name);
+$('#last_name').addClass('has-error');
+}
+else
+{
+error_last_name = '';
+$('#error_last_name').text(error_last_name);
+$('#last_name').removeClass('has-error');
+}
+
+if(error_first_name != '' || error_last_name != '')
+{
+return false;
+}
+else
+{
+$('#list_personal_details').removeClass('active active_tab1');
+$('#list_personal_details').removeAttr('href data-toggle');
+$('#personal_details').removeClass('active');
+$('#list_personal_details').addClass('inactive_tab1');
+$('#list_contact_details').removeClass('inactive_tab1');
+$('#list_contact_details').addClass('active_tab1 active');
+$('#list_contact_details').attr('href', '#contact_details');
+$('#list_contact_details').attr('data-toggle', 'tab');
+$('#contact_details').addClass('active in');
+}
+});
+
+$('#previous_btn_contact_details').click(function(){
+$('#list_contact_details').removeClass('active active_tab1');
+$('#list_contact_details').removeAttr('href data-toggle');
+$('#contact_details').removeClass('active in');
+$('#list_contact_details').addClass('inactive_tab1');
+$('#list_personal_details').removeClass('inactive_tab1');
+$('#list_personal_details').addClass('active_tab1 active');
+$('#list_personal_details').attr('href', '#personal_details');
+$('#list_personal_details').attr('data-toggle', 'tab');
+$('#personal_details').addClass('active in');
+});
+
+$('#btn_contact_details').click(function(){
+var error_address = '';
+var error_mobile_no = '';
+var mobile_validation = /^\d{10}$/;
+if($.trim($('#address').val()).length == 0)
+{
+error_address = 'Address is required';
+$('#error_address').text(error_address);
+$('#address').addClass('has-error');
+}
+else
+{
+error_address = '';
+$('#error_address').text(error_address);
+$('#address').removeClass('has-error');
+}
+
+if($.trim($('#mobile_no').val()).length == 0)
+{
+error_mobile_no = 'Mobile Number is required';
+$('#error_mobile_no').text(error_mobile_no);
+$('#mobile_no').addClass('has-error');
+}
+else
+{
+if (!mobile_validation.test($('#mobile_no').val()))
+{
+error_mobile_no = 'Invalid Mobile Number';
+$('#error_mobile_no').text(error_mobile_no);
+$('#mobile_no').addClass('has-error');
+}
+else
+{
+error_mobile_no = '';
+$('#error_mobile_no').text(error_mobile_no);
+$('#mobile_no').removeClass('has-error');
+}
+}
+if(error_address != '' || error_mobile_no != '')
+{
+return false;
+}
+else
+{
+$('#btn_contact_details').attr("disabled", "disabled");
+$(document).css('cursor', 'progress');
+$("#register_form").submit();
+}
 
 });
 
-</script>
-<?php
-$name = $_POST["fullname"];
-$date = $_POST["date"];
-$dob = $_POST["dob"];
-$age = $_POST["age"];
-$phone = $_POST["phone"];
-$email = $_POST["email"];
-
-?>
-<?php
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "kanvansports";
-
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-if (!$conn) {
-	die("Connection failed: " . mysqli_connect_error());
-}else{
-	$sql = "INSERT INTO sports(name,date,email,phone,dob,age)
-	VALUES ('$name','$date', '$email','$phone','$dob','$age',)";
-}
-if ($conn->query($sql) === TRUE) {
-	exit;
-  } else {
-	echo "Error: " . $sql . "<br>" . $conn->error;
-  }
-
-// mysqli_close($conn);
-?>
-
-<script>
-$(document).ready(function(){
-	var current_fs, next_fs, previous_fs; //fieldsets
-	var opacity;
-	var current = 1;
-	var steps = $("fieldset").length;
-	setProgressBar(current);
-	jQuery(".next").click(function(){
-		if(jQuery('[name="email_address"]').val()==""){
-			jQuery(".enter_email_err").html("Please enter email address!").show();
-		}
-		else if( !validateEmail(jQuery('[name="email_address"]').val())) {
-			jQuery(".enter_email_err").html("Please enter correct email address!").show();
-		}
-		else if(jQuery('[name="email_verify"]').val()==0){
-			jQuery(".enter_email_err").html("Email already exist!").show();
-		}
-		else if(jQuery("#enter_otp_phone").length==0){
-			jQuery(".enter_email_err").hide();
-			var valid=true;
-			jQuery(this).parent().find(".required").each(function(){
-				if(jQuery(this).val()==""){
-					jQuery(this).addClass("invalid");
-					valid=false;
-				}
-			});
-			if(valid==true){
-				current_fs = jQuery(this).parent();
-				next_fs = jQuery(this).parent().next();
-				//Add Class Active
-				jQuery("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-				//show the next fieldset
-				next_fs.show();
-				//hide the current fieldset with style
-				current_fs.animate({opacity: 0}, {
-					step: function(now) {
-						// for making fielset appear animation
-						opacity = 1 - now;
-						current_fs.css({
-						'display': 'none',
-						'position': 'relative'
-						});
-						next_fs.css({'opacity': opacity});
-					},
-					duration: 500
-				});
-				setProgressBar(++current);
-			}
-		}
-		else{
-			jQuery(".enter_email_err").hide();
-			jQuery(".enter_phone_err").html("Phone has not verified yet!");
-			jQuery("#enter_phone").addClass("invalid");
-		}
-	});
-	$(".previous").click(function(){
-		current_fs = jQuery(this).parent();
-		previous_fs = jQuery(this).parent().prev();
-		//Remove class active
-		jQuery("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
-		//show the previous fieldset
-		previous_fs.show();
-		//hide the current fieldset with style
-		current_fs.animate({opacity: 0}, {
-			step: function(now) {
-				// for making fielset appear animation
-				opacity = 1 - now;
-				current_fs.css({
-					'display': 'none',
-					'position': 'relative'
-				});
-				previous_fs.css({'opacity': opacity});
-			},
-			duration: 500
-		});
-		setProgressBar(--current);
-	});
-	function setProgressBar(curStep){
-		var percent = parseFloat(100 / steps) * curStep;
-		percent = percent.toFixed();
-		jQuery(".progress-bar")
-		.css("width",percent+"%")
-	}
-	jQuery(".submit").click(function(){
-		return false;
-	});
-});
-function validateEmail($email) {
-	var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-	return emailReg.test( $email );
-}
-function checkEmail(email_id){
-	if(email_id!=""){
-		jQuery(".enter_email_err").hide();
-		jQuery.ajax({
-			type: "post",
-			url: "<?php echo home_url(); ?>/wp-admin/admin-ajax.php",
-			data: {
-				action:'check_email',
-				email_id: email_id,
-			}
-		})
-		.done(function( result ) {
-			if(result=='verify'){
-				jQuery("[name='email_verify']").val(1);
-			}
-			else{
-				jQuery("[name='email_verify']").val(0);
-			}
-		});
-	}
-}
-</script>
-
-<script>
-jQuery(document).ready(function(){
-	jQuery(".send_otp_phone").click(function(){
-		var phone_number=jQuery('[name="phone_number"]').val();
-		if(phone_number==""){
-			jQuery('.enter_phone_err').html('Please enter phone number!').show();
-			jQuery('.enter_otp_phone').hide();
-		}
-		else if(jQuery('[name="phone_number"]').val().length!=10){
-			jQuery('.enter_phone_err').html('Please enter correct phone number!').show();
-			jQuery('.enter_otp_phone').hide();
-		}
-		else{
-			jQuery.ajax({
-				type: "post",
-				//dataType: "json",
-				url: "<?php echo home_url(); ?>/wp-admin/admin-ajax.php",
-				data: {
-					action:'phone_number',
-					phone_number: phone_number,
-				}
-			})
-			.done(function( msg ) {
-				if(msg != "exist"){
-					jQuery('.enter_phone_err').hide();
-					jQuery('.enter_otp_phone').show();
-				}
-				else{
-					jQuery('.enter_phone_err').html('Phone already exist!').show();
-					jQuery('.enter_otp_phone').hide();
-				}
-			});
-		}
-	});
-	jQuery(".otp_phone_verify").click(function(){
-		jQuery.ajax({
-			type: "post",
-			//dataType: "json",
-			url: "<?php echo home_url(); ?>/wp-admin/admin-ajax.php",
-			data: {
-				action:'phone_number_verify',
-				phone_number: jQuery('[name="phone_number"]').val(),
-				enter_otp_phone: jQuery('#enter_otp_phone').val(),
-			}
-		})
-		.done(function( msg ) {
-			if(msg=='verify'){
-				jQuery('.enter_otp_phone').html('<i class="fa fa-check-circle" aria-hidden="true"></i>Phone has been verified!');
-				jQuery("#enter_phone").removeClass("invalid").attr('readonly', true);
-			}
-			else{
-				jQuery(".enter_otp_phone_err").html("Please enter correct OTP!");
-			}
-		});
-	});
 });
 </script>
-<script>
-jQuery(document).ready(function(){
-	jQuery('[name="email_address"]').keyup(function(){
-		jQuery(".enter_email_err").hide();
-		var email_id=jQuery(this).val();
-		jQuery.ajax({
-			type: "post",
-			url: "<?php echo home_url(); ?>/wp-admin/admin-ajax.php",
-			data: {
-				action:'check_email',
-				email_id: email_id,
-			}
-		})
-		.done(function( result ) {
-			if(result=='verify'){
-				jQuery("[name='email_verify']").val(1);
-			}
-			else{
-				jQuery("[name='email_verify']").val(0);
-			}
-		});
-	});
-	jQuery('[name="country"]').change(function(){
-		jQuery("#cover-spin").show();
-		var country_id=jQuery(this).val();
-		jQuery.ajax({
-			type: "post",
-			url: "<?php echo home_url(); ?>/wp-admin/admin-ajax.php",
-			data: {
-				action:'get_states',
-				country_id: country_id,
-			}
-		})
-		.done(function( result ) {
-			jQuery('[name="state"] option').remove();
-			jQuery('[name="state"]').append(new Option("--Select--", ""));
-			jQuery.each(JSON.parse(result), function(i, field){
-				jQuery('[name="state"]').append(new Option(field.name, field.id));
-			});
-			jQuery("#cover-spin").hide();
-		});
-	});
-	jQuery('[name="state"]').change(function(){
-		jQuery("#cover-spin").show();
-		var state_id=jQuery(this).val();
-		jQuery.ajax({
-			type: "post",
-			url: "<?php echo home_url(); ?>/wp-admin/admin-ajax.php",
-			data: {
-				action:'get_cities',
-				state_id: state_id,
-			}
-		})
-		.done(function( result ) {
-			jQuery('[name="city"] option').remove();
-			jQuery('[name="city"]').append(new Option("--Select--", ""));
-			jQuery.each(JSON.parse(result), function(i, field){
-				jQuery('[name="city"]').append(new Option(field.name, field.id));
-			});
-			jQuery("#cover-spin").hide();
-		});
-	});
-	jQuery("#regForm").submit(function(){
-		jQuery("#cover-spin").show();
-		var formData = new FormData($(this)[0]);
-		$.ajax({
-			url: "<?php echo home_url(); ?>/wp-admin/admin-ajax.php",
-			type: 'POST',
-			data: formData,
-			async: false,
-			success: function (data) {
-				data=JSON.parse(data);
-				console.log('data', data);
-				if(data.action=="razorpay"){
-					window.location.href=data.redirect_url;
-				}
-				if(data.action=="cashfree"){
-					jQuery(".cashfree_form").html(data.form_data);
-					jQuery("#cashfreeForm").submit();
-				}
-				else{
-					//window.location.href="?alert=something_wrong";
-				}
-			},
-			cache: false,
-			contentType: false,
-			processData: false
-		});
-		return false;
-	});
-})
-</script>
-
