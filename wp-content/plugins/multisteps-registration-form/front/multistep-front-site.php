@@ -4,11 +4,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
 <style>
-.box
-{
-width:800px;
-margin:0 auto;
-}
+
+
 .active_tab1
 {
 background-color:#fff;
@@ -35,11 +32,18 @@ background-color:#ffff99;
     vertical-align: middle;
     cursor: pointer;
 }
+/* @media screen and (min-device-width: 768px) and (max-device-width: 1500px) { 
+    .box{
+width:800px;
+margin:0 auto;
+}
+} */
 </style>
 </head>
 <body>
 <br />
 <div class="container box">
+<div class="col-lg-12 col-md-12 col-sm-6">
 <br />
 <!-- <h2>Registration Form</h2><br /> -->
 <?php echo $message; ?>
@@ -47,13 +51,13 @@ background-color:#ffff99;
 <ul class="nav nav-tabs">
 
 <li class="nav-item">
-<a class="nav-link inactive_tab1" id="list_personal_details" style="border:1px solid #ccc">Personal Details</a>
+<a class="nav-link active_tab1" id="list_personal_details" style="border:1px solid #ccc">Personal Details</a>
 </li>
 <li class="nav-item">
 <a class="nav-link inactive_tab1" id="list_contact_details" style="border:1px solid #ccc">Medical Details</a>
 </li>
 <li class="nav-item">
-<a class="nav-link active_tab1" style="border:1px solid #ccc" id="list_login_details"> finish</a>
+<a class="nav-link inactive_tab1" style="border:1px solid #ccc" id="list_login_details"> finish</a>
 </li>
 
 </ul>
@@ -501,6 +505,7 @@ background-color:#ffff99;
 <input type="submit" name="btn_contact_details" id="btn_contact_details" class="btn btn-success btn-lg" value="Register" />
 </div>
 <br />
+</div>
 </div>
 </div>
 </div>
